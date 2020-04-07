@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hqj.es.mapper.IndexJobLogMapper" >
+    <resultMap id="BaseResultMap" type="com.hqj.es.domain.IndexJobLogDomain" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="index_id" property="indexId" jdbcType="BIGINT" />
+        <result column="index_name" property="indexName" jdbcType="VARCHAR" />
+        <result column="job_id" property="jobId" jdbcType="BIGINT" />
+        <result column="data_sync_type" property="dataSyncType" jdbcType="TINYINT" />
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="total" property="total" jdbcType="INTEGER" />
+        <result column="error_code" property="errorCode" jdbcType="VARCHAR" />
+        <result column="error_message" property="errorMessage" jdbcType="VARCHAR" />
+        <result column="deleted" property="deleted" jdbcType="TINYINT" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, index_id, index_name, job_id, data_sync_type, start_time, end_time, total, error_code, error_message, deleted
+    </sql>
+    <select id="selectByQuery" resultMap="BaseResultMap" parameterType="com.hqj.es.bean.IndexQueryBean" >
+        select
+        <include refid="Base_Column_List" />
+        from es_index_job_log
+        where 1 = 1
+        <if test="q != null and q != ''">
+            and index_name like concat('%', #{q}, '%')
+        </if>
+        and deleted = 0
+        order by id desc
+    </select>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from es_index_job_log
+        where id = #{id,jdbcType=BIGINT}
+        and deleted = 0
+    </select>
+    <update id="deleteById" parameterType="java.lang.Long" >
+        update es_index_job_log
+        set deleted = 1
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insert" parameterType="com.hqj.es.domain.IndexJobLogDomain" useGeneratedKeys="true" keyProperty="id">
+        insert into es_index_job_log
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="indexId != null" >
+                index_id,
+            </if>
+            <if test="indexName != null" >
+                index_name,
+            </if>
+            <if test="jobId != null" >
+                job_id,
+            </if>
+            <if test="dataSyncType != null" >
+                data_sync_type,
+            </if>
+            <if test="startTime != null" >
+                start_time,
+            </if>
+            <if test="endTime != null" >
+                end_time,
+            </if>
+            <if test="total != null" >
+                total,
+            </if>
+            <if test="errorCode != null" >
+                error_code,
+            </if>
+            <if test="errorMessage != null" >
+                error_message,
+            </if>
+            deleted
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="indexId != null" >
+                #{indexId,jdbcType=BIGINT},
+            </if>
+            <if test="indexName != null" >
+                #{indexName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobId != null" >
+                #{jobId,jdbcType=BIGINT},
+            </if>
+            <if test="dataSyncType != null" >
+                #{dataSyncType,jdbcType=TINYINT},
+            </if>
+            <if test="startTime != null" >
+                #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="total != null" >
+                #{total,jdbcType=INTEGER},
+            </if>
+            <if test="errorCode != null" >
+                #{errorCode,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMessage != null" >
+                #{errorMessage,jdbcType=VARCHAR},
+            </if>
+            0
+        </trim>
+
+    </insert>
+    <update id="update" parameterType="com.hqj.es.domain.IndexJobLogDomain" >
+        update es_index_job_log
+        <set>
+            <if test="indexId != null" >
+                index_id = #{indexId,jdbcType=BIGINT},
+            </if>
+            <if test="indexName != null" >
+                index_name = #{indexName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobId != null" >
+                job_id = #{jobId,jdbcType=BIGINT},
+            </if>
+            <if test="dataSyncType != null" >
+                data_sync_type = #{dataSyncType,jdbcType=TINYINT},
+            </if>
+            <if test="startTime != null" >
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="total != null" >
+                total = #{total,jdbcType=INTEGER},
+            </if>
+            <if test="errorCode != null" >
+                error_code = #{errorCode,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMessage != null" >
+                error_message = #{errorMessage,jdbcType=VARCHAR},
+            </if>
+            deleted = 0
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+</mapper>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hqj.es.mapper.IndexMapper" >
+    <resultMap id="BaseResultMap" type="com.hqj.es.domain.IndexDomain" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="description" property="description" jdbcType="VARCHAR" />
+        <result column="shards" property="shards" jdbcType="INTEGER" />
+        <result column="replicas" property="replicas" jdbcType="INTEGER" />
+        <result column="create_by" property="createBy" jdbcType="BIGINT" />
+        <result column="update_by" property="updateBy" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="deleted" property="deleted" jdbcType="TINYINT" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, name, description, shards, replicas, create_by, update_by, create_time, update_time, deleted
+    </sql>
+    <select id="selectByQuery" resultMap="BaseResultMap" parameterType="com.hqj.es.bean.IndexQueryBean" >
+        select
+        <include refid="Base_Column_List" />
+        from es_index
+        where 1 = 1
+        <if test="q != null and q != ''">
+            and name like concat('%', #{q}, '%')
+        </if>
+        <if test="userId != null">
+            and create_by = #{userId}
+        </if>
+        and deleted = 0
+        order by id desc
+    </select>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from es_index
+        where id = #{id,jdbcType=BIGINT}
+        and deleted = 0
+    </select>
+    <select id="selectByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from es_index
+        where `name` = #{name,jdbcType=VARCHAR}
+        and deleted = 0
+    </select>
+    <update id="deleteById" parameterType="java.lang.Long" >
+        update es_index
+        set deleted = 1,
+            update_time = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insert" parameterType="com.hqj.es.domain.IndexDomain" useGeneratedKeys="true" keyProperty="id">
+        insert into es_index
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="name != null" >
+                name,
+            </if>
+            <if test="description != null" >
+                description,
+            </if>
+            <if test="shards != null" >
+                shards,
+            </if>
+            <if test="replicas != null" >
+                replicas,
+            </if>
+            <if test="createBy != null" >
+                create_by,
+            </if>
+            <if test="updateBy != null" >
+                update_by,
+            </if>
+            create_time,
+            update_time,
+            deleted
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="name != null" >
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null" >
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="shards != null" >
+                #{shards,jdbcType=INTEGER},
+            </if>
+            <if test="replicas != null" >
+                #{replicas,jdbcType=INTEGER},
+            </if>
+            <if test="createBy != null" >
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="updateBy != null" >
+                #{updateBy,jdbcType=BIGINT},
+            </if>
+            now(),
+            now(),
+            0
+        </trim>
+
+    </insert>
+    <update id="update" parameterType="com.hqj.es.domain.IndexDomain" >
+        update es_index
+        <set>
+            <if test="name != null" >
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null" >
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="shards != null" >
+                shards = #{shards,jdbcType=INTEGER},
+            </if>
+            <if test="replicas != null" >
+                replicas = #{replicas,jdbcType=INTEGER},
+            </if>
+            <if test="updateBy != null" >
+                update_by = #{updateBy,jdbcType=BIGINT},
+            </if>
+            <if test="deleted != null" >
+                deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+            update_time = now()
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.hqj.es.domain.IndexDomain" >
+        insert into es_index
+        set
+        <if test="id != null" >
+            `id` = #{id,jdbcType=BIGINT},
+        </if>
+        <if test="name != null" >
+            `name` = #{name,jdbcType=VARCHAR},
+        </if>
+        <if test="description != null" >
+            description = #{description,jdbcType=VARCHAR},
+        </if>
+        <if test="shards != null" >
+            shards = #{shards,jdbcType=INTEGER},
+        </if>
+        <if test="replicas != null" >
+            replicas = #{replicas,jdbcType=INTEGER},
+        </if>
+        <if test="createBy != null" >
+            create_by = #{createBy,jdbcType=BIGINT},
+        </if>
+        <if test="updateBy != null" >
+            update_by = #{updateBy,jdbcType=BIGINT},
+        </if>
+        deleted = 0
+        ON DUPLICATE KEY UPDATE
+        <if test="name != null" >
+            `name` = #{name,jdbcType=VARCHAR},
+        </if>
+        <if test="description != null" >
+            description = #{description,jdbcType=VARCHAR},
+        </if>
+        <if test="shards != null" >
+            shards = #{shards,jdbcType=INTEGER},
+        </if>
+        <if test="replicas != null" >
+            replicas = #{replicas,jdbcType=INTEGER},
+        </if>
+        <if test="updateBy != null" >
+            update_by = #{updateBy,jdbcType=BIGINT},
+        </if>
+        deleted = 0
+    </insert>
+
+</mapper>

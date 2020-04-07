@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hqj.es.mapper.IndexPropertyMapper" >
+    <resultMap id="BaseResultMap" type="com.hqj.es.domain.IndexPropertyDomain" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="VARCHAR" />
+        <result column="indexed" property="indexed" jdbcType="TINYINT" />
+        <result column="analyzer" property="analyzer" jdbcType="VARCHAR" />
+        <result column="search_analyzer" property="searchAnalyzer" jdbcType="VARCHAR" />
+        <result column="index_id" property="indexId" jdbcType="BIGINT" />
+        <result column="create_by" property="createBy" jdbcType="BIGINT" />
+        <result column="update_by" property="updateBy" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="deleted" property="deleted" jdbcType="TINYINT" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, name, type, indexed, analyzer, search_analyzer, index_id, create_by, update_by, create_time, update_time, deleted
+    </sql>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from es_index_property
+        where id = #{id,jdbcType=BIGINT}
+        and deleted = 0
+    </select>
+    <select id="selectByIndexId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from es_index_property
+        where index_id = #{indexId,jdbcType=BIGINT}
+        and deleted = 0
+    </select>
+    <update id="deleteById" parameterType="java.lang.Long" >
+        update es_index_property
+        set deleted = 1,
+            update_time = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="deleteByIndexId" parameterType="java.lang.Long" >
+        update es_index_property
+        set deleted = 1,
+            update_time = now()
+        where index_id = #{indexId,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insert" parameterType="com.hqj.es.domain.IndexPropertyDomain" useGeneratedKeys="true" keyProperty="id">
+        insert into es_index_property
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="name != null" >
+                name,
+            </if>
+            <if test="type != null" >
+                type,
+            </if>
+            <if test="indexed != null" >
+                indexed,
+            </if>
+            <if test="analyzer != null" >
+                analyzer,
+            </if>
+            <if test="searchAnalyzer != null" >
+                search_analyzer,
+            </if>
+            <if test="indexId != null" >
+                index_id,
+            </if>
+            <if test="createBy != null" >
+                create_by,
+            </if>
+            <if test="updateBy != null" >
+                update_by,
+            </if>
+            create_time,
+            update_time,
+            deleted
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="name != null" >
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null" >
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="indexed != null" >
+                #{indexed,jdbcType=TINYINT},
+            </if>
+            <if test="analyzer != null" >
+                #{analyzer,jdbcType=VARCHAR},
+            </if>
+            <if test="searchAnalyzer != null" >
+                #{searchAnalyzer,jdbcType=VARCHAR},
+            </if>
+            <if test="indexId != null" >
+                #{indexId,jdbcType=BIGINT},
+            </if>
+            <if test="createBy != null" >
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="updateBy != null" >
+                #{updateBy,jdbcType=BIGINT},
+            </if>
+            now(),
+            now(),
+            0
+        </trim>
+
+    </insert>
+    <update id="update" parameterType="com.hqj.es.domain.IndexPropertyDomain" >
+        update es_index_property
+        <set>
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null" >
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="indexed != null" >
+                indexed = #{indexed,jdbcType=TINYINT},
+            </if>
+            <if test="analyzer != null" >
+                analyzer = #{analyzer,jdbcType=VARCHAR},
+            </if>
+            <if test="searchAnalyzer != null" >
+                search_analyzer = #{searchAnalyzer,jdbcType=VARCHAR},
+            </if>
+            <if test="indexId != null" >
+                index_id = #{indexId,jdbcType=BIGINT},
+            </if>
+            <if test="updateBy != null" >
+                update_by = #{updateBy,jdbcType=BIGINT},
+            </if>
+            <if test="deleted != null" >
+                #{deleted,jdbcType=TINYINT},
+            </if>
+            update_time = now()
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.hqj.es.domain.IndexPropertyDomain" >
+        insert into es_index_property
+        set
+        <if test="id != null" >
+            id = #{id,jdbcType=BIGINT},
+        </if>
+        <if test="name != null" >
+            name = #{name,jdbcType=VARCHAR},
+        </if>
+        <if test="type != null" >
+            type = #{type,jdbcType=VARCHAR},
+        </if>
+        <if test="indexed != null" >
+            indexed = #{indexed,jdbcType=TINYINT},
+        </if>
+        <if test="analyzer != null" >
+            analyzer = #{analyzer,jdbcType=VARCHAR},
+        </if>
+        <if test="searchAnalyzer != null" >
+            search_analyzer = #{searchAnalyzer,jdbcType=VARCHAR},
+        </if>
+        <if test="indexId != null" >
+            index_id = #{indexId,jdbcType=BIGINT},
+        </if>
+        <if test="createBy != null" >
+            create_by = #{createBy,jdbcType=BIGINT},
+        </if>
+        <if test="updateBy != null" >
+            update_by = #{updateBy,jdbcType=BIGINT},
+        </if>
+        deleted = 0
+        ON DUPLICATE KEY UPDATE
+        <if test="name != null" >
+            name = #{name,jdbcType=VARCHAR},
+        </if>
+        <if test="type != null" >
+            type = #{type,jdbcType=VARCHAR},
+        </if>
+        <if test="indexed != null" >
+            indexed = #{indexed,jdbcType=TINYINT},
+        </if>
+        <if test="analyzer != null" >
+            analyzer = #{analyzer,jdbcType=VARCHAR},
+        </if>
+        <if test="searchAnalyzer != null" >
+            search_analyzer = #{searchAnalyzer,jdbcType=VARCHAR},
+        </if>
+        <if test="indexId != null" >
+            index_id = #{indexId,jdbcType=BIGINT},
+        </if>
+        <if test="updateBy != null" >
+            update_by = #{updateBy,jdbcType=BIGINT},
+        </if>
+        deleted = 0
+    </insert>
+
+</mapper>

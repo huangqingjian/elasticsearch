@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hqj.es.mapper.IndexJobMapper" >
+    <resultMap id="BaseResultMap" type="com.hqj.es.domain.IndexJobDomain" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="index_id" property="indexId" jdbcType="BIGINT" />
+        <result column="index_name" property="indexName" jdbcType="VARCHAR" />
+        <result column="switchs" property="switchs" jdbcType="TINYINT" />
+        <result column="data_sync_type" property="dataSyncType" jdbcType="TINYINT" />
+        <result column="data_sync_all_rule" property="dataSyncAllRule" jdbcType="TINYINT" />
+        <result column="data_sync_incr_rule" property="dataSyncIncrRule" jdbcType="TINYINT" />
+        <result column="last_sync_time" property="lastSyncTime" jdbcType="TIMESTAMP" />
+        <result column="create_by" property="createBy" jdbcType="BIGINT" />
+        <result column="update_by" property="updateBy" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="deleted" property="deleted" jdbcType="TINYINT" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, index_id, index_name, switchs, data_sync_type, create_by, data_sync_all_rule,
+        data_sync_incr_rule, last_sync_time, update_by, create_time, update_time, deleted
+    </sql>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from es_index_job
+        where id = #{id,jdbcType=BIGINT}
+        and deleted = 0
+    </select>
+    <select id="selectByIndexIds" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from es_index_job
+        where index_id in
+        <foreach collection="indexIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and deleted = 0
+    </select>
+    <select id="selectByQuery" resultMap="BaseResultMap" parameterType="com.hqj.es.bean.IndexJobQueryBean">
+        select
+        <include refid="Base_Column_List" />
+        from es_index_job
+        where
+        switchs = 1
+        and deleted = 0
+        <if test="syncAllRule != null">
+            and data_sync_all_rule = #{syncAllRule}
+        </if>
+        <if test="syncIncrRule != null">
+            and data_sync_incr_rule = #{syncIncrRule}
+        </if>
+        <if test="pageStart != null and pageSize != null">
+            limit #{pageStart}, #{pageSize}
+        </if>
+    </select>
+    <update id="deleteById" parameterType="java.lang.Long" >
+        update es_index_job
+        set deleted = 1,
+            update_time = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="deleteByIndexId" parameterType="java.lang.Long" >
+        update es_index_job
+        set deleted = 1,
+            update_time = now()
+        where index_id = #{indexId,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insert" parameterType="com.hqj.es.domain.IndexJobDomain" useGeneratedKeys="true" keyProperty="id">
+        insert into es_index_job
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="indexId != null" >
+                index_id,
+            </if>
+            <if test="indexName != null" >
+                index_name,
+            </if>
+            <if test="switchs != null" >
+                switchs,
+            </if>
+            <if test="dataSyncType != null" >
+                data_sync_type,
+            </if>
+            <if test="dataSyncAllRule != null" >
+                data_sync_all_rule,
+            </if>
+            <if test="dataSyncIncrRule != null" >
+                data_sync_incr_rule,
+            </if>
+            <if test="lastSyncTime != null" >
+                last_sync_time,
+            </if>
+            <if test="createBy != null" >
+                create_by,
+            </if>
+            <if test="updateBy != null" >
+                update_by,
+            </if>
+            create_time,
+            update_time,
+            deleted
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="indexId != null" >
+                #{indexId,jdbcType=BIGINT},
+            </if>
+            <if test="indexName != null" >
+                #{indexName,jdbcType=VARCHAR},
+            </if>
+            <if test="switchs != null" >
+                #{switchs,jdbcType=TINYINT},
+            </if>
+            <if test="dataSyncType != null" >
+                #{dataSyncType,jdbcType=TINYINT},
+            </if>
+            <if test="dataSyncAllRule != null" >
+                #{dataSyncAllRule,jdbcType=TINYINT},
+            </if>
+            <if test="dataSyncIncrRule != null" >
+                #{dataSyncIncrRule,jdbcType=TINYINT},
+            </if>
+            <if test="lastSyncTime != null" >
+                #{lastSyncTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createBy != null" >
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="updateBy != null" >
+                #{updateBy,jdbcType=BIGINT},
+            </if>
+            now(),
+            now(),
+            0
+        </trim>
+
+    </insert>
+    <update id="update" parameterType="com.hqj.es.domain.IndexJobDomain" >
+        update es_index_job
+        <set>
+            <if test="indexId != null" >
+                index_id = #{indexId,jdbcType=BIGINT},
+            </if>
+            <if test="indexName != null" >
+                index_name = #{indexName,jdbcType=VARCHAR},
+            </if>
+            <if test="switchs != null" >
+                switchs = #{switchs,jdbcType=TINYINT},
+            </if>
+            <if test="dataSyncType != null" >
+                data_sync_type = #{dataSyncType,jdbcType=TINYINT},
+            </if>
+            <if test="dataSyncAllRule != null" >
+                data_sync_all_rule = #{dataSyncAllRule,jdbcType=TINYINT},
+            </if>
+            <if test="dataSyncIncrRule != null" >
+                data_sync_incr_rule = #{dataSyncIncrRule,jdbcType=TINYINT},
+            </if>
+            <if test="lastSyncTime != null" >
+                last_sync_time = #{lastSyncTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null" >
+                update_by = #{updateBy,jdbcType=BIGINT},
+            </if>
+            <if test="deleted != null" >
+                deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+            update_time = now()
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateLastSyncTime">
+        update es_index_job
+        set last_sync_time = #{lastSyncTime,jdbcType=TIMESTAMP}
+        where id = #{id}
+    </update>
+    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.hqj.es.domain.IndexJobDomain" >
+        insert into es_index_job
+        set
+        <if test="id != null" >
+            id = #{id,jdbcType=BIGINT},
+        </if>
+        <if test="indexId != null" >
+            index_id = #{indexId,jdbcType=BIGINT},
+        </if>
+        <if test="indexName != null" >
+            index_name = #{indexName,jdbcType=VARCHAR},
+        </if>
+        <if test="switchs != null" >
+            switchs = #{switchs,jdbcType=TINYINT},
+        </if>
+        <if test="dataSyncType != null" >
+            data_sync_type = #{dataSyncType,jdbcType=TINYINT},
+        </if>
+        <if test="dataSyncAllRule != null" >
+            data_sync_all_rule = #{dataSyncAllRule,jdbcType=TINYINT},
+        </if>
+        <if test="dataSyncIncrRule != null" >
+            data_sync_incr_rule = #{dataSyncIncrRule,jdbcType=TINYINT},
+        </if>
+        <if test="lastSyncTime != null" >
+            last_sync_time = #{lastSyncTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="createBy != null" >
+            create_by = #{createBy,jdbcType=BIGINT},
+        </if>
+        <if test="updateBy != null" >
+            update_by = #{updateBy,jdbcType=BIGINT},
+        </if>
+        deleted = 0
+        ON DUPLICATE KEY UPDATE
+        <if test="indexId != null" >
+            index_id = #{indexId,jdbcType=BIGINT},
+        </if>
+        <if test="indexName != null" >
+            index_name = #{indexName,jdbcType=VARCHAR},
+        </if>
+        <if test="switchs != null" >
+            switchs = #{switchs,jdbcType=TINYINT},
+        </if>
+        <if test="dataSyncType != null" >
+            data_sync_type = #{dataSyncType,jdbcType=TINYINT},
+        </if>
+        <if test="dataSyncAllRule != null" >
+            data_sync_all_rule = #{dataSyncAllRule,jdbcType=TINYINT},
+        </if>
+        <if test="dataSyncIncrRule != null" >
+            data_sync_incr_rule = #{dataSyncIncrRule,jdbcType=TINYINT},
+        </if>
+        <if test="lastSyncTime != null" >
+            last_sync_time = #{lastSyncTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="updateBy != null" >
+            update_by = #{updateBy,jdbcType=BIGINT},
+        </if>
+        deleted = 0
+    </insert>
+
+    <update id="updateSwitchs">
+        update es_index_job
+        set switchs = #{switchs}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+</mapper>

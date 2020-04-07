@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hqj.user.mapper.UserMapper" >
+    <resultMap id="BaseResultMap" type="com.hqj.user.domain.UserDomain" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+        <result column="face" property="face" jdbcType="VARCHAR" />
+        <result column="managed" property="managed" jdbcType="TINYINT" />
+        <result column="create_by" property="createBy" jdbcType="BIGINT" />
+        <result column="update_by" property="updateBy" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="deleted" property="deleted" jdbcType="TINYINT" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, user_name, password, face, managed, create_by, update_by, create_time, update_time, deleted
+    </sql>
+    <select id="selectByQuery" resultMap="BaseResultMap" parameterType="com.hqj.user.bean.UserQueryBean" >
+        select
+        <include refid="Base_Column_List" />
+        from es_user
+        where 1 = 1
+        <if test="q != null and q != ''">
+            and user_name like concat('%', #{q}, '%')
+        </if>
+        <if test="userId != null">
+            and create_by = #{userId}
+        </if>
+        and deleted = 0
+        order by id desc
+    </select>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from es_user
+        where id = #{id,jdbcType=BIGINT}
+        and deleted = 0
+    </select>
+    <select id="selecByUserName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from es_user
+        where user_name = #{userName}
+        and deleted = 0
+    </select>
+    <update id="deleteById" parameterType="java.lang.Long" >
+        update es_user
+        set deleted = 1
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insert" parameterType="com.hqj.user.domain.UserDomain" useGeneratedKeys="true" keyProperty="id">
+        insert into es_user
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="userName != null" >
+                user_name,
+            </if>
+            <if test="password != null" >
+                password,
+            </if>
+            <if test="face != null" >
+                face,
+            </if>
+            <if test="managed != null" >
+                managed,
+            </if>
+            <if test="createBy != null" >
+                create_by,
+            </if>
+            <if test="updateBy != null" >
+                update_by,
+            </if>
+            create_time,
+            update_time,
+            deleted
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="userName != null" >
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null" >
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="face != null" >
+                #{face,jdbcType=VARCHAR},
+            </if>
+            <if test="managed != null" >
+                #{managed,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null" >
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="updateBy != null" >
+                #{updateBy,jdbcType=BIGINT},
+            </if>
+            now(),
+            now(),
+            0
+        </trim>
+
+    </insert>
+    <update id="update" parameterType="com.hqj.user.domain.UserDomain" >
+        update es_user
+        <set>
+            <if test="userName != null" >
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null" >
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="face != null" >
+                face = #{face,jdbcType=VARCHAR},
+            </if>
+            <if test="managed != null" >
+                managed = #{managed,jdbcType=TINYINT},
+            </if>
+            <if test="updateBy != null" >
+                update_by = #{updateBy,jdbcType=BIGINT},
+            </if>
+            <if test="deleted != null" >
+                deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+            update_time = now()
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.hqj.user.domain.UserDomain" >
+        insert into es_user
+        set
+        <if test="id != null" >
+            id = #{id,jdbcType=BIGINT},
+        </if>
+        <if test="userName != null" >
+            user_name = #{userName,jdbcType=VARCHAR},
+        </if>
+        <if test="password != null" >
+            password = #{password,jdbcType=VARCHAR},
+        </if>
+        <if test="face != null" >
+            face = #{face,jdbcType=VARCHAR},
+        </if>
+        <if test="managed != null" >
+            managed = #{managed,jdbcType=TINYINT},
+        </if>
+        <if test="createBy != null" >
+            create_by = #{createBy,jdbcType=BIGINT},
+        </if>
+        <if test="updateBy != null" >
+            update_by = #{updateBy,jdbcType=BIGINT},
+        </if>
+        <if test="deleted != null" >
+            deleted = #{deleted,jdbcType=TINYINT},
+        </if>
+        deleted = 0
+        ON DUPLICATE KEY UPDATE
+        <if test="userName != null" >
+            user_name = #{userName,jdbcType=VARCHAR},
+        </if>
+        <if test="password != null" >
+            password = #{password,jdbcType=VARCHAR},
+        </if>
+        <if test="face != null" >
+            face = #{face,jdbcType=VARCHAR},
+        </if>
+        <if test="managed != null" >
+            managed = #{managed,jdbcType=TINYINT},
+        </if>
+        <if test="updateBy != null" >
+            update_by = #{updateBy,jdbcType=BIGINT},
+        </if>
+        <if test="deleted != null" >
+            deleted = #{deleted,jdbcType=TINYINT},
+        </if>
+        deleted = 0
+    </insert>
+
+    <update id="managed" parameterType="com.hqj.user.domain.UserDomain" >
+        update es_user
+        set managed = #{managed}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+</mapper>

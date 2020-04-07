@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hqj.es.mapper.IndexInterfaceMapper" >
+    <resultMap id="BaseResultMap" type="com.hqj.es.domain.IndexInterfaceDomain" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="index_id" property="indexId" jdbcType="BIGINT" />
+        <result column="job_id" property="jobId" jdbcType="BIGINT" />
+        <result column="url" property="url" jdbcType="VARCHAR" />
+        <result column="deleted" property="deleted" jdbcType="TINYINT" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, index_id, job_id, `url`, deleted
+    </sql>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from es_index_interface
+        where id = #{id,jdbcType=BIGINT}
+        and deleted = 0
+    </select>
+    <select id="selectByIndexId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from es_index_interface
+        where index_id = #{indexId,jdbcType=BIGINT}
+        and deleted = 0
+    </select>
+    <update id="deleteById" parameterType="java.lang.Long" >
+        update es_index_interface
+        set deleted = 1
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="deleteByIndexId" parameterType="java.lang.Long" >
+        update es_index_interface
+        set deleted = 1
+        where index_id = #{indexId,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insert" parameterType="com.hqj.es.domain.IndexInterfaceDomain" useGeneratedKeys="true" keyProperty="id">
+        insert into es_index_interface
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="indexId != null" >
+                index_id,
+            </if>
+            <if test="jobId != null" >
+                job_id,
+            </if>
+            <if test="url != null" >
+                `url`,
+            </if>
+            deleted
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="indexId != null" >
+                #{index_id,jdbcType=BIGINT},
+            </if>
+            <if test="jobId != null" >
+                #{job_id,jdbcType=BIGINT},
+            </if>
+            <if test="url != null" >
+                #{url,jdbcType=VARCHAR},
+            </if>
+            0
+        </trim>
+
+    </insert>
+    <update id="update" parameterType="com.hqj.es.domain.IndexInterfaceDomain" >
+        update es_index_interface
+        <set>
+            <if test="indexId != null" >
+                index_id = #{indexId,jdbcType=BIGINT},
+            </if>
+            <if test="jobId != null" >
+                job_id = #{jobId,jdbcType=BIGINT},
+            </if>
+            <if test="url != null" >
+                `url` = #{url,jdbcType=VARCHAR},
+            </if>
+            deleted = 0
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.hqj.es.domain.IndexInterfaceDomain" >
+        insert into es_index_interface
+        set
+        <if test="id != null" >
+            id = #{id,jdbcType=BIGINT},
+        </if>
+        <if test="indexId != null" >
+            index_id = #{indexId,jdbcType=BIGINT},
+        </if>
+        <if test="jobId != null" >
+            job_id = #{jobId,jdbcType=BIGINT},
+        </if>
+        <if test="url != null" >
+            `url` = #{url,jdbcType=VARCHAR},
+        </if>
+        deleted = 0
+        ON DUPLICATE KEY UPDATE
+        <if test="indexId != null" >
+            index_id = #{indexId,jdbcType=BIGINT},
+        </if>
+        <if test="jobId != null" >
+            job_id = #{jobId,jdbcType=BIGINT},
+        </if>
+        <if test="url != null" >
+            `url` = #{url,jdbcType=VARCHAR},
+        </if>
+        deleted = 0
+    </insert>
+
+</mapper>
